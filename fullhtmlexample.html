@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Favorite fruit start</title>
+    <style>
+      body {
+        font: 1em sans-serif;
+        width: 200px;
+        padding: 0;
+        margin: 0 auto;
+      }
+
+      form {
+        max-width: 200px;
+      }
+
+      p * {
+        display: block;
+      }
+
+      input {
+        appearance: none;
+        width: 100%;
+        border: 1px solid #333;
+        margin: 0;
+
+        font-family: inherit;
+        font-size: 90%;
+
+        box-sizing: border-box;
+      }
+
+      /* invalid fields */
+      input.invalid {
+        border: 2px solid #900;
+        background-color: #fdd;
+      }
+
+      input:focus.invalid {
+        outline: none;
+        /* make sure keyboard-only users see a change when focusing */
+        border-style: dashed;
+      }
+
+      /* error messages */
+      #error {
+        width: 100%;
+        font-size: 80%;
+        color: white;
+        background-color: #900;
+        border-radius: 0 0 5px 5px;
+        box-sizing: border-box;
+      }
+
+      .active {
+        padding: 0.3rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <form>
+      <fieldset>
+        <legend>
+          Do you have a driver's license?<span aria-label="required">*</span>
+        </legend>
+        <input type="radio" required name="driver" id="r1" value="yes" /><label
+          for="r1"
+          >Yes</label
+        >
+        <input type="radio" required name="driver" id="r2" value="no" /><label
+          for="r2"
+          >No</label
+        >
+      </fieldset>
+      <p>
+        <label for="n1">How old are you?</label>
+        <input type="number" min="12" max="120" step="1" id="n1" name="age" />
+      </p>
+      <p>
+        <label for="t1"
+          >What's your favorite fruit?<span aria-label="required"
+            >*</span
+          ></label
+        >
+        <input
+          type="text"
+          id="t1"
+          name="fruit"
+          list="l1"
+          required
+          pattern="[Bb]anana|[Cc]herry|[Aa]pple|[Ss]trawberry|[Ll]emon|[Oo]range"
+        />
+        <datalist id="l1">
+          <option>Banana</option>
+          <option>Cherry</option>
+          <option>Apple</option>
+          <option>Strawberry</option>
+          <option>Lemon</option>
+          <option>Orange</option>
+        </datalist>
+      </p>
+      <p>
+        <label for="mail">
+          <span>Please enter an email address:</span>
+        </label>
+        <input type="text" id="mail" name="mail" />
+        <span id="error" aria-live="polite"></span>
+      </p>
+      <p>
+        <label for="t3">Leave a short message</label>
+        <textarea id="t3" name="msg" maxlength="140" rows="5"></textarea>
+      </p>
+      <p>
+        <button>Submit</button>
+      </p>
+    </form>
+    <script>
+      const form = document.querySelector("form");
+      const email = document.getElementById("mail");
+      const error = document.getElementById("error");
+
+      // Regular expression for email validation as per HTML specification
+      const emailRegExp =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+      // Check if the email is valid
+      const isValidEmail = () => {
+        const validity =
+          email.value.length !== 0 && emailRegExp.test(email.value);
+        return validity;
+      };
+
+      // Update email input class based on validity
+      const setEmailClass = (isValid) => {
+        email.className = isValid ? "valid" : "invalid";
+      };
+
+      // Update error message and visibility
+      const updateError = (isValidInput) => {
+        if (isValidInput) {
+          error.textContent = "";
+          error.removeAttribute("class");
+        } else {
+          error.textContent = "I expect an email, darling!";
+          error.setAttribute("class", "active");
+        }
+      };
+
+      // Initialize email validity on page load
+      const initializeValidation = () => {
+        const emailInput = isValidEmail();
+        setEmailClass(emailInput);
+      };
+
+      // Handle input event to update email validity
+      const handleInput = () => {
+        const emailInput = isValidEmail();
+        setEmailClass(emailInput);
+        updateError(emailInput);
+      };
+
+      // Handle form submission to show error if email is invalid
+      const handleSubmit = (event) => {
+        event.preventDefault();
+
+        const emailInput = isValidEmail();
+        setEmailClass(emailInput);
+        updateError(emailInput);
+      };
+
+      // Now we can rebuild our validation constraint
+      // Because we do not rely on CSS pseudo-class, we have to
+      // explicitly set the valid/invalid class on our email field
+      window.addEventListener("load", initializeValidation);
+      // This defines what happens when the user types in the field
+      email.addEventListener("input", handleInput);
+      // This defines what happens when the user tries to submit the data
+      form.addEventListener("submit", handleSubmit);
+    </script>
+  </body>
+</html>
